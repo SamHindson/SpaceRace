@@ -3,10 +3,14 @@ package co.flamingtrousers.spacerace;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
 
+import co.flamingtrousers.spacerace.input.Input;
+import co.flamingtrousers.spacerace.input.InputManager;
 import co.flamingtrousers.spacerace.screens.ScreenManager;
 
 public class Game extends Canvas implements Runnable {
@@ -20,8 +24,12 @@ public class Game extends Canvas implements Runnable {
 	public static double elapsedTime;
 	public static double dt;
 	
+	public static final boolean DEBUG = true;
+	
 	private Thread graphicsThread;
 	private JFrame frame;
+	
+	private InputManager inputManager;
 	
 	private boolean running = false;
 	
@@ -30,6 +38,7 @@ public class Game extends Canvas implements Runnable {
 		setPreferredSize(size);		
 		
 		ScreenManager.init();
+		Input.init();
 		
 		frame = new JFrame();
 		frame.add(this);                                       
@@ -38,7 +47,15 @@ public class Game extends Canvas implements Runnable {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
 		frame.pack();                                          
 		frame.setLocationRelativeTo(null);                     
-		frame.setVisible(true);  
+		frame.setVisible(true);
+		
+		requestFocusInWindow();
+		requestFocus();
+		
+		inputManager = new InputManager();
+		addMouseListener(inputManager);
+		addMouseMotionListener(inputManager);
+		addKeyListener(inputManager);
 		
 		start();
 	}
@@ -94,6 +111,14 @@ public class Game extends Canvas implements Runnable {
 		g2d.dispose();
 		
 		bufferStrategy.show();
+	}
+	
+	public static int getGameWidth() {
+		return width * scale;
+	}
+	
+	public static int getGameHeight() {
+		return height * scale;
 	}
 
 	public static void main(String[] args) {
