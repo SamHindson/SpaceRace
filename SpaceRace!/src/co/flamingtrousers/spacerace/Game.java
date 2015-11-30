@@ -9,6 +9,7 @@ import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
 
+import co.flamingtrousers.spacerace.graphics.Sprite;
 import co.flamingtrousers.spacerace.input.Input;
 import co.flamingtrousers.spacerace.input.InputManager;
 import co.flamingtrousers.spacerace.screens.ScreenManager;
@@ -23,8 +24,12 @@ public class Game extends Canvas implements Runnable {
 	
 	public static double elapsedTime;
 	public static double dt;
+	public static int fps;
+	private static int lastTime = -1;
 	
 	public static final boolean DEBUG = true;
+
+	public static final double GRAV = 0.1;
 	
 	private Thread graphicsThread;
 	private JFrame frame;
@@ -38,7 +43,6 @@ public class Game extends Canvas implements Runnable {
 		setPreferredSize(size);		
 		
 		ScreenManager.init();
-		Input.init();
 		
 		frame = new JFrame();
 		frame.add(this);                                       
@@ -83,10 +87,16 @@ public class Game extends Canvas implements Runnable {
 		
 		while(running) {
 			now = System.nanoTime();
-			dt = (then - now) / 1000000000.0;
+			dt = (now - then) / 1000000000.0;
 			
 			update(dt);
 			render();
+			
+			try {
+				Thread.sleep(16);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			
 			then = now;
 		}
@@ -114,10 +124,18 @@ public class Game extends Canvas implements Runnable {
 	}
 	
 	public static int getGameWidth() {
-		return width * scale;
+		return width;
 	}
 	
 	public static int getGameHeight() {
+		return height;
+	}
+	
+	public static int getScreenWidth() {
+		return width * scale;
+	}
+	
+	public static int getScreenHeight() {
 		return height * scale;
 	}
 

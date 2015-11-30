@@ -13,7 +13,6 @@ public class Input {
 	
 	public static void setKey(int key, boolean doodoo) {
 		keys[key] = doodoo;
-		System.out.println(key + " --- " + doodoo);
 	}
 	
 	public static void setButton(int button, boolean doodoo) {

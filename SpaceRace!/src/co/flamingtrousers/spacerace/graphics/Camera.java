@@ -1,6 +1,7 @@
 package co.flamingtrousers.spacerace.graphics;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
@@ -8,52 +9,59 @@ import co.flamingtrousers.spacerace.Game;
 import co.flamingtrousers.spacerace.input.Input;
 
 public class Camera {
-	public double x, y, dx, dy;
-	public double zoom = 1;
+	public double x, y, fx, fy;
+	public double zoom = 0.2;
 
 	public void update(double dt) {
-		if(Game.DEBUG) {
-			if(Input.getKey(KeyEvent.VK_NUMPAD8)) {
-				dy = -500;
-			} else if(Input.getKey(KeyEvent.VK_NUMPAD2)) {
-				dy = 500;
-			} else {
-				dy = 0;
+		if (Game.DEBUG) {
+			if (Input.getKey(KeyEvent.VK_NUMPAD8)) {
+				y += 500 * dt;
+			} else if (Input.getKey(KeyEvent.VK_NUMPAD2)) {
+				y -= 500 * dt;
 			}
-			
-			if(Input.getKey(KeyEvent.VK_NUMPAD4)) {
-				dx = -500;
-			} else if(Input.getKey(KeyEvent.VK_NUMPAD6)) {
-				dx = 500;
-			} else {
-				dx = 0;
+
+			if (Input.getKey(KeyEvent.VK_NUMPAD4)) {
+				x += 500 * dt;
+			} else if (Input.getKey(KeyEvent.VK_NUMPAD6)) {
+				x -= 500 * dt;
 			}
-			
-			if(Input.getButton(MouseEvent.BUTTON1)) {
+
+			if (Input.getButton(MouseEvent.BUTTON1)) {
 				zoom += dt;
-			} else if(Input.getButton(MouseEvent.BUTTON3)) {
+			} else if (Input.getButton(MouseEvent.BUTTON3)) {
 				zoom -= dt;
 			}
-			
-			/*if((int)Game.elapsedTime % 2 == 0) {
-				zoom += dt;
-			} else {
-				zoom -= dt;
-			}*/
-			
-			x += dx * dt;
-			y += dy * dt;
+
+			/*
+			 * if((int)Game.elapsedTime % 2 == 0) { zoom += dt; } else { zoom -=
+			 * dt; }
+			 */
 		}
 	}
-	
+
 	public void refreshGraphics(Graphics2D g2d) {
-		g2d.scale(zoom, zoom);
+		g2d.scale(getZoom(), getZoom());
 		g2d.translate(x, y);
 	}
 
 	public void reset(Graphics2D g2d) {
 		g2d.translate(-x, -y);
-		g2d.scale(1 / zoom, 1 / zoom);
+		g2d.scale(zoom, zoom);
 	}
-	
+
+	public void lookAt(Focusable focusable) {
+		lookAt(focusable.getFocusX(), focusable.getFocusY());
+	}
+
+	public void lookAt(double xx, double yy) {
+		fx = -xx;
+		fy = -yy;
+		x = fx + Game.getScreenWidth() / (2 * getZoom());
+		y = fy + Game.getScreenHeight() / (2 * getZoom());
+	}
+
+	private double getZoom() {
+		return 1. / zoom;
+	}
+
 }
