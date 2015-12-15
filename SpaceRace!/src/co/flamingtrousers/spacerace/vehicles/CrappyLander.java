@@ -7,17 +7,22 @@ import java.awt.geom.AffineTransform;
 import co.flamingtrousers.spacerace.graphics.Flames;
 import co.flamingtrousers.spacerace.graphics.Sprite;
 import co.flamingtrousers.spacerace.input.Input;
+import co.flamingtrousers.spacerace.physics.Rekt;
 import co.flamingtrousers.spacerace.universe.Universe;
 
 public class CrappyLander extends SpaceCraft {
 	
 	private Flames flames;
 	
-	public CrappyLander(double x, double y) {
+	private Rekt collider;
+	
+	public CrappyLander(Universe u, double x, double y) {
 		super(x, y);
 		sprite = new Sprite(x, y, "crappylander");
 		sprite.setScale(100, 100);
 		System.out.println(x + " " + y);
+		
+		collider = new Rekt(u.getPhysics(), x, y, 40, 80);
 		
 		flames = new Flames(100);
 	}
@@ -25,12 +30,16 @@ public class CrappyLander extends SpaceCraft {
 	@Override
 	public void update(Universe universe, double dt) {
 		if(Input.getKey(KeyEvent.VK_SPACE)) {
-			thrust = 40.f;
+			thrust = 80.f;
 			flames.setActive(true);
 		} else {
 			thrust = 0;
 			flames.setActive(false);
 		}
+		
+		double fx = x + 15 + 20 * Math     .sin(-angle);
+		double fy = y + 15 + 20 * Math.cos(-angle);
+		flames.set(fx, fy, angle + Math.PI / 2.);
 		
 		if(!onSurface) 
 			if(Input.getKey(KeyEvent.VK_A))
@@ -46,18 +55,50 @@ public class CrappyLander extends SpaceCraft {
 		//sprite.setPosition(x, y);
 		sprite.setScale(1, 1);
 		
-		flames.set(x, y, angle);
+		collider.setX(getX());
+		collider.setY(getY());
+		
 		flames.update(dt);
 	}
 	
 	@Override
+	public double getX() {
+		return x + 15.5;
+	}
+	
+	@Override
+	public double getY() {
+		return y + 20.;
+	}
+	
+	@Override
+	public void setX(double x) {
+		this.x = x - 15.5;
+	}
+	
+	@Override
+	public void setY(double y) {
+		this.y = y - 20.;
+	}
+	
+	@Override
+	protected double getMaxImpactThreshhold() {
+		return 100;
+	}
+	
+	@Override
+	protected void handleHighImpactCollision(Universe u) {
+		u.addExplosion(getX(), getY());
+	}
+	
+	@Override
 	public double getFocusX() {
-		return x + 1.5;
+		return getX();
 	}
 	
 	@Override
 	public double getFocusY() {
-		return y + 2;
+		return getY();
 	}
 
 	@Override
@@ -75,7 +116,7 @@ public class CrappyLander extends SpaceCraft {
 		flames.draw(g2d);
 		
 		affine = new AffineTransform();
-		affine.setToRotation(angle, x + 1.5, y + 2);
+		affine.setToRotation(angle, x + 15, y + 20);
 		affine.translate(x, y);
 		affine.scale(2, 2);
 		sprite.draw(g2d, affine);

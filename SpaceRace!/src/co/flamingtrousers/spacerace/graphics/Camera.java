@@ -27,9 +27,9 @@ public class Camera {
 			}
 
 			if (Input.getButton(MouseEvent.BUTTON1)) {
-				zoom += dt;
+				zoom += dt * 10;
 			} else if (Input.getButton(MouseEvent.BUTTON3)) {
-				zoom -= dt;
+				zoom -= dt * 10;
 			}
 
 			/*

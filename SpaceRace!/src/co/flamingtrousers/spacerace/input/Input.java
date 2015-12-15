@@ -24,6 +24,14 @@ public class Input {
 		mouseY = y;
 	}
 	
+	public static int getMouseX() {
+		return mouseX;
+	}
+	
+	public static int getMouseY() {
+		return mouseY;
+	}
+	
 	public static boolean getKey(int key) {
 		return keys[key];
 	}

@@ -11,9 +11,9 @@ public abstract class Mass implements Focusable {
 	protected double x, y, dx, dy;
 	protected boolean onSurface;
 
-	public void pull(GravityMan puller, double dt) {
-		double dxx = puller.getX() - x;
-		double dyy = puller.getY() - y;
+	public void pull(GravityMan puller, Universe u, double dt) {
+		double dxx = puller.getX() - getX();
+		double dyy = puller.getY() - getY();
 		double angle = Math.atan2(dyy, dxx);
 
 		double distance = Math.sqrt(Math.pow(dxx, 2) + Math.pow(dyy, 2));
@@ -25,9 +25,14 @@ public abstract class Mass implements Focusable {
 		double mass = puller.getMass();
 		double force = Game.GRAV * mass / (distance * distance);
 
-		if (distance <= puller.getRadius() + getHeight() / 2) {
-			x = puller.getX() + (puller.getRadius() + getHeight() / 2) * -Math.cos(angle);
-			y = puller.getY() + (puller.getRadius() + getHeight() / 2) * -Math.sin(angle);
+		if (distance <= puller.getRadius() + getHeight() / 4) {
+			
+			if(Vec2.mag(dx, dy) > getMaxImpactThreshhold()) {
+				handleHighImpactCollision(u);
+			}
+			
+			setX(puller.getX() + (puller.getRadius() + getHeight() / 4) * -Math.cos(angle));
+			setY(puller.getY() + (puller.getRadius() + getHeight() / 4) * -Math.sin(angle));
 			
 			onSurface = true;
 
@@ -46,9 +51,10 @@ public abstract class Mass implements Focusable {
 		dy += ay * dt;
 	}
 
+
 	public void update(Universe universe, double dt) {
 		for (GravityMan man : universe.getGravityMen()) {
-			pull(man, dt);
+			pull(man, universe, dt);
 		}
 
 		x += dx * dt;
@@ -62,8 +68,18 @@ public abstract class Mass implements Focusable {
 	public double getY() {
 		return y;
 	}
+	
+	public void setX(double x) {
+		this.x = x;
+	}
+	
+	public void setY(double y) {
+		this.y = y;
+	}
 
 	protected abstract double getHeight();
-
 	public abstract boolean isMoving();
+	
+	protected abstract void handleHighImpactCollision(Universe u);
+	protected abstract double getMaxImpactThreshhold();
 }

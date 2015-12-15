@@ -3,6 +3,7 @@ package co.flamingtrousers.spacerace;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
@@ -18,7 +19,7 @@ public class Game extends Canvas implements Runnable {
 	
 	private static final long serialVersionUID = 729303269231262510L;
 	
-	public static final int width = 250;
+	public static final int width = 300;
 	public static final int height = width / 4 * 3;
 	public static final int scale = 3;
 	
@@ -29,11 +30,12 @@ public class Game extends Canvas implements Runnable {
 	
 	public static final boolean DEBUG = true;
 
-	public static final double GRAV = 0.1;
+	public static final double GRAV = 1;
 	
+	private int frames;
 	private Thread graphicsThread;
 	private JFrame frame;
-	
+	private RenderingHints effects;
 	private InputManager inputManager;
 	
 	private boolean running = false;
@@ -43,6 +45,8 @@ public class Game extends Canvas implements Runnable {
 		setPreferredSize(size);		
 		
 		ScreenManager.init();
+		
+		effects = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		frame = new JFrame();
 		frame.add(this);                                       
@@ -92,11 +96,11 @@ public class Game extends Canvas implements Runnable {
 			update(dt);
 			render();
 			
-			try {
+			/*try {
 				Thread.sleep(16);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
+			}*/
 			
 			then = now;
 		}
@@ -104,6 +108,14 @@ public class Game extends Canvas implements Runnable {
 
 	private void update(double d) {
 		elapsedTime += dt;
+		
+		frames++;
+		
+		if((int)elapsedTime > lastTime) {
+			lastTime = (int)elapsedTime;
+			System.out.println(frames + "fps");
+			frames = 0;
+		}
 		
 		ScreenManager.update(d);
 	}
@@ -117,6 +129,7 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		Graphics2D g2d = (Graphics2D)bufferStrategy.getDrawGraphics();
+		g2d.setRenderingHints(effects);
 		ScreenManager.render(g2d);
 		g2d.dispose();
 		

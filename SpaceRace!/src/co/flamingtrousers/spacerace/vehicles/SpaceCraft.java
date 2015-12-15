@@ -12,6 +12,8 @@ public abstract class SpaceCraft extends Mass {
 	protected double angle;
 	protected double thrust;
 	
+	protected boolean active;
+	
 	public SpaceCraft(double x, double y) {
 		this.x = x;
 		this.y = y;

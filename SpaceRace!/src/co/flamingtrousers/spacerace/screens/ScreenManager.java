@@ -14,7 +14,6 @@ public class ScreenManager {
 	public static void init() {
 		Sprite.init();
 		Input.init();
-		Flames.init();
 		currentScreen = new PlayScreen();
 		currentScreen.load();
 	}

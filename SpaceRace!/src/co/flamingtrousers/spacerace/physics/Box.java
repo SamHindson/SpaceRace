@@ -2,6 +2,7 @@ package co.flamingtrousers.spacerace.physics;
 
 import java.awt.Graphics2D;
 
+import co.flamingtrousers.spacerace.universe.Universe;
 import co.flamingtrousers.spacerace.universe.UniverseColors;
 
 public class Box extends Mass {
@@ -15,6 +16,16 @@ public class Box extends Mass {
 	public void draw(Graphics2D g2d) {
 		g2d.setColor(UniverseColors.BLUE);
 		g2d.fillRect((int)(x), (int)(y), 1, 1);
+	}
+	
+	@Override
+	protected double getMaxImpactThreshhold() {
+		return 0;
+	}
+	
+	@Override
+	protected void handleHighImpactCollision(Universe u) {
+		System.out.println("Meh");
 	}
 
 	@Override

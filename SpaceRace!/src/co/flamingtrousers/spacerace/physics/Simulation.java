@@ -4,62 +4,80 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 public class Simulation {
-	ArrayList<AABB> abs;
+	ArrayList<Rekt> rekts;
 
 	public Simulation() {
 		System.out.println("Physics Sim Initialized!");
-		abs = new ArrayList<>();
+		rekts = new ArrayList<>();
 	}
 
-	public void add(AABB what) {
-		abs.add(what);
+	public void add(Rekt what) {
+		rekts.add(what);
 	}
 
 	public void update(double dt) {
-		for (AABB aabb : abs) {
-			aabb.update(dt);
-
-			for (AABB aabb2 : abs) {
-				if (!aabb.equals(aabb2)) {
-					
-				}
+		for (int t = 0; t < rekts.size() - 1; t++) {
+			for (int r = t + 1; r < rekts.size(); r++) {
+				doRektVsRekt(rekts.get(t), rekts.get(r));
 			}
+		}
+
+		for (Rekt rekt : rekts) {
+			rekt.update(dt);
 		}
 	}
 
-	private void handleCollision(AABB ab1, AABB ab2, Manifold m) {
-		Vec2 normal = new Vec2(1, 0);
-		// System.out.println("Normal: " + normal);
+	private void doRektVsRekt(Rekt rekt1, Rekt rekt2) {
+		Vec2[] axes = new Vec2[8];
 
-		double restitution = Math.min(ab1.getRestitution(), ab2.getRestitution());
-		// System.out.println("Resitiution: " + restitution);
+		axes[0] = new Vec2(rekt1.getVert(0).x - rekt1.getVert(1).x, rekt1.getVert(0).y - rekt1.getVert(1).y);
+		axes[1] = new Vec2(rekt1.getVert(1).x - rekt1.getVert(2).x, rekt1.getVert(1).y - rekt1.getVert(2).y);
+		axes[2] = new Vec2(rekt2.getVert(0).x - rekt2.getVert(1).x, rekt2.getVert(0).y - rekt2.getVert(1).y);
+		axes[3] = new Vec2(rekt2.getVert(1).x - rekt2.getVert(2).x, rekt2.getVert(1).y - rekt2.getVert(2).y);
+		
+		for (int i = 0; i < 4; i++) {
+			double[] one = new double[4];
+			double[] two = new double[4];
 
-		Vec2 relativeVelocity = ab2.getVelocity().sub(ab1.getVelocity());
-		// System.out.println("Relative Vel: " + relativeVelocity);
-
-		double velocityAlongNormal = relativeVelocity.dot(normal);
-		// System.out.println("Vel along normal: " + velocityAlongNormal);
-
-		if (velocityAlongNormal > 0) {
-			return;
+			for (int j = 0; j < 4; j++) {
+				one[j] = Vec2.project(rekt1.getVert(j), axes[i]);
+				two[j] = Vec2.project(rekt2.getVert(j), axes[i]);
+			}
+			
+			double minB = min(two);
+			double minA = min(one);
+			double maxB = max(two);
+			double maxA = max(one);
+			
+			boolean overlap = minB <= maxA && maxB >= minA;
 		}
-
-		double impulseScalar = -(1 + restitution) * velocityAlongNormal;
-		impulseScalar /= 1 / ab1.getMass() + 1 / ab2.getMass();
-		// System.out.println("Impulse Scalar: " + impulseScalar);
-
-		Vec2 impulse = normal.mul(impulseScalar);
-		// System.out.println("The Impulse: " + impulse);
-
-		ab1.editVelocity(impulse.mul(-1 / ab1.getMass()));
-		ab2.editVelocity(impulse.mul(1 / ab2.getMass()));
-		// System.out.println();
-		// ab2.setVelocity(Vec2.ZERO);
+	}
+	
+	private double min(double[] vals) {
+		double min = Double.MAX_VALUE;
+		
+		for(double mine : vals) {
+			if(mine < min)
+				min = mine;
+		}
+		
+		return min;
+	}
+	
+	private double max(double[] vals) {
+		double min = -Double.MAX_VALUE;
+		
+		for(double mine : vals) {
+			if(mine > min)
+				min = mine;
+		}
+		
+		return min;
 	}
 
 	public void render(Graphics2D g2d) {
-		for (AABB aabb : abs) {
-			aabb.draw(g2d);
+		for (Rekt rekt : rekts) {
+			rekt.draw(g2d);
 		}
 	}
 }

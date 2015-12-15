@@ -10,6 +10,11 @@ public class Vec2 {
 		this.y = y;
 	}
 
+	public void set(double x, double y) {
+		this.x = x;
+		this.y = y;
+	}
+
 	public double getX() {
 		return x;
 	}
@@ -41,6 +46,14 @@ public class Vec2 {
 	public double cross(Vec2 c) {
 		return x * c.y - y * c.x;
 	}
+	
+	public static double project(Vec2 a, Vec2 b) {
+		double z = a.dot(b) / (b.mag() * b.mag());
+		double xe = b.x * b.x * z;
+		double ye = b.y * b.y * z;
+		
+		return xe + ye;
+	}
 
 	@Override
 	public String toString() {
@@ -57,5 +70,9 @@ public class Vec2 {
 
 	public Vec2 add(Vec2 v) {
 		return new Vec2(v.x + x, v.y + y);
+	}
+
+	public static double mag(double dx, double dy) {
+		return Math.sqrt(dx * dx + dy * dy);
 	}
 }
