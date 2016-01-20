@@ -32,6 +32,7 @@ public class CrappyLander extends SpaceCraft {
 		if(Input.getKey(KeyEvent.VK_SPACE)) {
 			thrust = 80.f;
 			flames.setActive(true);
+			fuel -= dt / 5;
 		} else {
 			thrust = 0;
 			flames.setActive(false);
@@ -61,6 +62,17 @@ public class CrappyLander extends SpaceCraft {
 		flames.update(dt);
 	}
 	
+	@Override
+	public void draw(Graphics2D g2d) {
+		flames.draw(g2d);
+		
+		affine = new AffineTransform();
+		affine.setToRotation(angle, x + 15, y + 20);
+		affine.translate(x, y);
+		affine.scale(2, 2);
+		sprite.draw(g2d, affine);
+	}
+
 	@Override
 	public double getX() {
 		return x + 15.5;
@@ -109,17 +121,6 @@ public class CrappyLander extends SpaceCraft {
 	@Override
 	public boolean isMoving() {
 		return thrust != 0;
-	}
-
-	@Override
-	public void draw(Graphics2D g2d) {
-		flames.draw(g2d);
-		
-		affine = new AffineTransform();
-		affine.setToRotation(angle, x + 15, y + 20);
-		affine.translate(x, y);
-		affine.scale(2, 2);
-		sprite.draw(g2d, affine);
 	}
 
 }

@@ -11,6 +11,7 @@ public abstract class SpaceCraft extends Mass {
 	protected AffineTransform identity, affine;
 	protected double angle;
 	protected double thrust;
+	protected double fuel;
 	
 	protected boolean active;
 	
