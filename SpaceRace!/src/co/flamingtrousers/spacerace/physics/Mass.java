@@ -1,10 +1,9 @@
 package co.flamingtrousers.spacerace.physics;
 
-import java.awt.event.KeyEvent;
+import java.awt.Graphics2D;
 
 import co.flamingtrousers.spacerace.Game;
 import co.flamingtrousers.spacerace.graphics.Focusable;
-import co.flamingtrousers.spacerace.input.Input;
 import co.flamingtrousers.spacerace.universe.Universe;
 
 public abstract class Mass implements Focusable {
@@ -75,6 +74,10 @@ public abstract class Mass implements Focusable {
 	
 	public void setY(double y) {
 		this.y = y;
+	}
+	
+	public void draw(Graphics2D g2d) {
+		// Meh
 	}
 
 	protected abstract double getHeight();

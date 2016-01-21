@@ -23,7 +23,7 @@ public class Planet extends GravityMan {
 	
 	public Planet(int planetNumber, double angle) {
 		color = UniverseColors.getRandom();
-		radius = Math.random() * 1500 + 1000;
+		radius = Math.random() * 1500 + 200;
 		mass = 10 * Math.PI * radius * radius;
 		x = y = 0;
 		

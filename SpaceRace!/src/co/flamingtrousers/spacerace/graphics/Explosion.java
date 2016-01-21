@@ -2,7 +2,7 @@ package co.flamingtrousers.spacerace.graphics;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.Random;
+import java.awt.Polygon;
 
 import co.flamingtrousers.spacerace.universe.UniverseColors;
 
@@ -10,6 +10,9 @@ public class Explosion {
 	private boolean active = true;
 	private double x, y;
 	private ExplosionSpeck[] specks;
+
+	private Polygon bam;
+	private int bamfames = 30, bams = 0;
 
 	public Explosion(int size, double x, double y) {
 		specks = new ExplosionSpeck[size];
@@ -20,8 +23,10 @@ public class Explosion {
 		for (int k = 0; k < size; k++) {
 			specks[k] = new ExplosionSpeck(this, 0.3);
 		}
+
+		bam = new Polygon();
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
@@ -38,9 +43,30 @@ public class Explosion {
 				alive = true;
 			}
 		}
-		
-		if(!alive)
+
+		if (!alive)
 			active = false;
+		else {
+
+			if (bams < bamfames) {
+				bams++;
+				int k = (int) (Math.random() * 150) + 20;
+				bam.npoints = k;
+
+				int[] xx = new int[k];
+				int[] yy = new int[k];
+
+				for (int i = 0; i < k; i++) {
+					int r = (int) ((100 + Math.random() * 75) * ((bamfames * 1. - bams * 1.) / bamfames * 1.));
+					double a = (Math.PI * 2) * (i * 1. / k * 1.);
+					xx[i] = (int) (x + r * Math.cos(a));
+					yy[i] = (int) (y + r * Math.sin(a));
+				}
+
+				bam.xpoints = xx;
+				bam.ypoints = yy;
+			}
+		}
 	}
 
 	public void draw(Graphics2D g2d) {
@@ -48,6 +74,11 @@ public class Explosion {
 			if (speck != null) {
 				speck.draw(g2d);
 			}
+		}
+
+		if (bams < bamfames) {
+			g2d.setColor(new Color(255, 255, 255, 50));
+			g2d.fill(bam);
 		}
 	}
 
@@ -88,8 +119,9 @@ public class Explosion {
 		}
 
 		public void draw(Graphics2D g2d) {
-			g2d.setColor(age < lifetime * 0.05 ? Color.WHITE : age < lifetime * 0.2 ? UniverseColors.ORANGE : UniverseColors.RED);
-			g2d.fillRect((int) x, (int) y, 5, 5);
+			g2d.setColor(age < lifetime * 0.05 ? Color.WHITE
+					: age < lifetime * 0.2 ? UniverseColors.ORANGE : UniverseColors.RED);
+			g2d.fillRect((int) x, (int) y, 1, 1);
 		}
 	}
 }

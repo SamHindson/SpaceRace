@@ -23,4 +23,8 @@ public abstract class SpaceCraft extends Mass {
 	}
 	
 	public abstract void draw(Graphics2D g2d);
+	
+	public double getFuel() {
+		return fuel;
+	}
 }

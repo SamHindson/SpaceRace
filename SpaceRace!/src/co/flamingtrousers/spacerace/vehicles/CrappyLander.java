@@ -25,11 +25,13 @@ public class CrappyLander extends SpaceCraft {
 		collider = new Rekt(u.getPhysics(), x, y, 40, 80);
 		
 		flames = new Flames(100);
+		
+		fuel = 1;
 	}
 	
 	@Override
 	public void update(Universe universe, double dt) {
-		if(Input.getKey(KeyEvent.VK_SPACE)) {
+		if(Input.getKey(KeyEvent.VK_SPACE) && fuel > 0) {
 			thrust = 80.f;
 			flames.setActive(true);
 			fuel -= dt / 5;
@@ -72,6 +74,8 @@ public class CrappyLander extends SpaceCraft {
 		affine.scale(2, 2);
 		sprite.draw(g2d, affine);
 	}
+	
+	
 
 	@Override
 	public double getX() {
@@ -95,7 +99,7 @@ public class CrappyLander extends SpaceCraft {
 	
 	@Override
 	protected double getMaxImpactThreshhold() {
-		return 100;
+		return 1;
 	}
 	
 	@Override
